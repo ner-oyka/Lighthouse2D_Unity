@@ -362,7 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /FMODProject/lighthouse2d_project
-/Assets
 /Library
 /Temp
-!/Assets/Scripts
+Assets/*
+!Assets/Scripts
+!Assets/Settings
+!Assets/Shaders
