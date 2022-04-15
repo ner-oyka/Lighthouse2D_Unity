@@ -66,18 +66,6 @@ public class PlayerInteractionHandler : MonoBehaviour, IMouseInputHandler
         }
     }
 
-    private void ActionMenu()
-    {
-        if (selectedEntity != null)
-        {
-            if (Vector2.Distance(transform.position, selectedEntity.transform.position) <= GameSettings.instance.MaxDistanceToEntityInteraction)
-            {
-                //activate actions menu
-                EventBus.RaiseEvent<IEntityHandler>(h => h.OnShowActionMenu(selectedEntity));
-            }
-        }
-    }
-
     public void OnMouseLeftDown()
     {
         UseMainAction();
@@ -90,7 +78,14 @@ public class PlayerInteractionHandler : MonoBehaviour, IMouseInputHandler
 
     public void OnMouseRightDown()
     {
-        ActionMenu();
+        if (selectedEntity != null)
+        {
+            if (Vector2.Distance(transform.position, selectedEntity.transform.position) <= GameSettings.instance.MaxDistanceToEntityInteraction)
+            {
+                //activate actions menu
+                EventBus.RaiseEvent<IEntityHandler>(h => h.OnShowActionMenu(selectedEntity));
+            }
+        }
     }
 
     public void OnMouseRightUp()

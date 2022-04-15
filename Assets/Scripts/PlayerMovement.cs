@@ -5,17 +5,27 @@ using UnityEngine.InputSystem;
 using EventBusSystem;
 
 public class PlayerMovement : MonoBehaviour, IPlayerInputHandler
-{
+{ 
+    public bool IsMove => _isMove;
+    public bool IsRunning => _isRunning;
+
     [Header("Movement")]
-    public float WalkSpeed = 5f;
-    public float SprintSpeed = 10f;
-    public float RotateSpeed = 7.0f;
+    [SerializeField]
+    private float WalkSpeed = 150f;
+    [SerializeField]
+    private float SprintSpeed = 300f;
+    [SerializeField]
+    private float RotateSpeed = 15f;
 
     [Header("Camera Offset")]
-    public Cinemachine.CinemachineVirtualCamera VirtualCamera;
-    public float DistanceToCameraOffset = 5.0f;
-    public float MaxDistanceCameraOffset = 7.0f;
-    public float SpeedCameraOffset = 5.0f;
+    [SerializeField]
+    private Cinemachine.CinemachineVirtualCamera VirtualCamera;
+    [SerializeField]
+    private float DistanceToCameraOffset = 5.0f;
+    [SerializeField]
+    private float MaxDistanceCameraOffset = 8.0f;
+    [SerializeField]
+    private float SpeedCameraOffset = 10.0f;
 
     private float m_cachedDistanceToCamera;
 
@@ -27,6 +37,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerInputHandler
     private Vector2 m_MousePosition;
 
     private Cinemachine.CinemachineTransposer m_CameraTransposer;
+
+    private bool _isMove;
+    private bool _isRunning;
 
     // Start is called before the first frame update
     void Start()
@@ -60,6 +73,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerInputHandler
         //m_Rigidbody2D.velocity = m_MovementDirection * m_CurrentSpeed * Time.fixedDeltaTime;
         m_Rigidbody2D.velocity = (m_mainCamera.transform.right * m_MovementDirection.x + m_mainCamera.transform.up * m_MovementDirection.y) * m_CurrentSpeed * Time.fixedDeltaTime;
 
+        _isMove = m_Rigidbody2D.velocity.magnitude > 0.0f ? true : false;
 
         Quaternion _targetRotation = Quaternion.LookRotation(Vector3.forward, _mousePosition - transform.position);
 
@@ -83,7 +97,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerInputHandler
         }
         else
         {
-            m_CameraTransposer.m_FollowOffset = Vector3.Lerp(m_CameraTransposer.m_FollowOffset, Vector3.zero, Time.deltaTime * SpeedCameraOffset);
+            m_CameraTransposer.m_FollowOffset = Vector3.Lerp(m_CameraTransposer.m_FollowOffset, Vector3.zero, Time.deltaTime * SpeedCameraOffset * 0.5f);
         }
         m_CameraTransposer.m_FollowOffset.z = -100;
     }
@@ -91,11 +105,13 @@ public class PlayerMovement : MonoBehaviour, IPlayerInputHandler
     private void StartSprint()
     {
         m_CurrentSpeed = SprintSpeed;
+        _isRunning = true;
     }
 
     private void StopSprint()
     {
         m_CurrentSpeed = WalkSpeed;
+        _isRunning = false;
     }
 
     public void OnStartSprint()

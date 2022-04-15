@@ -9,16 +9,16 @@ public class SpawnPointEditor : Editor
         base.OnInspectorGUI();
         SpawnPoint script = (SpawnPoint)target;
 
-        script.FirstSpawn = EditorGUILayout.Toggle("First Spawn", script.FirstSpawn);
+        script.Entry = EditorGUILayout.Toggle("Entry", script.Entry);
 
-        if (script.FirstSpawn)
+        if (script.Entry)
         {
             SpawnPoint[] spawnPoints = FindObjectsOfType<SpawnPoint>();
             foreach (SpawnPoint spawnPoint in spawnPoints)
             {
-                spawnPoint.FirstSpawn = false;
+                spawnPoint.Entry = false;
             }
-            script.FirstSpawn = !script.FirstSpawn;
+            script.Entry = !script.Entry;
         }        
     }
 }

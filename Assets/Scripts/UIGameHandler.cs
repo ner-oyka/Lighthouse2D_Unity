@@ -116,7 +116,6 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
 
     void OnDialogueFinished(DialogueTree dlg)
     {
-        DialogueCanvas.gameObject.SetActive(false);
         if (dialogueCachedButtons != null)
         {
             foreach (var tempBtn in dialogueCachedButtons.Keys)
@@ -128,6 +127,8 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
             }
             dialogueCachedButtons = null;
         }
+        DialogueCanvas.gameObject.SetActive(false);
+        EventBus.RaiseEvent<IDialogHandler>(h => h.OnCancelDialog());
     }
 
     void OnDialoguePaused(DialogueTree dlg)
@@ -251,6 +252,7 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
     public void CloseNotePanel()
     {
         NoteCanvas.SetActive(false);
+        EventBus.RaiseEvent<INoteHandler>(h => h.OnCloseNote());
 
         GameEventsDebugText.text += "\n PLAYER EVENT: Close note";
     }
@@ -302,7 +304,7 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
 
     private void ActivateEntityActionsMenu(in Entity entity)
     {
-        HideEntityDescription();
+        StartCoroutine(HideEntityDescription());
 
         Vector3 menuPos = m_MainCamera.ScreenToWorldPoint(PlayerInputManager.instance.MousePosition);
         menuPos.z = 0;
@@ -368,8 +370,9 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
         EntityDescriptionText.text = description;
     }
 
-    private void HideEntityDescription()
+    IEnumerator HideEntityDescription()
     {
+        yield return new WaitForSeconds(.05f);
         EntityDescriptionText.text = "";
         EntityDescriptionCanvas.gameObject.SetActive(false);
     }
@@ -378,7 +381,7 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
     {
         if (EntityDescriptionCanvas.gameObject.activeSelf)
         {
-            HideEntityDescription();
+             StartCoroutine(HideEntityDescription());
         }
 
         GameEventsDebugText.text += "\n GLOBAL EVENT: Kill Entity '" + entity.Name + "'";
@@ -438,7 +441,7 @@ public class UIGameHandler : MonoBehaviour, InputActions.IUIActions, INoteHandle
 
     public void OnHideDescription()
     {
-        HideEntityDescription();
+        StartCoroutine(HideEntityDescription());
     }
 
     public void OnShowActionMenu(in Entity entity)

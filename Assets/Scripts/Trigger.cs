@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
+using MyBox;
 
+[RequireComponent(typeof(ColliderGizmo))]
 public class Trigger : MonoBehaviour
 {
     public UnityEvent onEnter;

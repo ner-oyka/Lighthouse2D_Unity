@@ -10,6 +10,7 @@ public class FireAction : WeaponAction
     public float Scattering = 0.1f;
     public Transform Spawn;
     public GameObject ParticleTest;
+    public GameObject TracerTest;
 
     public override bool IsCanUseAction()
     {
@@ -29,20 +30,19 @@ public class FireAction : WeaponAction
         if (hitFP)
         {
             SpawnDecal(hitFP.point);
+            SpawnTracer(hitFP.point);
         }
         else
         {
             SpawnDecal(pos);
+            SpawnTracer(pos);
         }
 
         RaycastHit2D hit = Physics2D.Linecast(Spawn.position, pos, LayerMask.GetMask("Entity"));
         if (hit)
         {
-            if (Vector2.Distance(Spawn.position, hit.point) > GameSettings.instance.MaxDistanceToEntityInteraction)
-            {
-                EventBus.RaiseEvent<IEntityHandler>(h => h.OnWeaponHit(hit.transform.GetComponent<Entity>(), Damage));
-                return;
-            }
+            EventBus.RaiseEvent<IEntityHandler>(h => h.OnWeaponHit(hit.transform.GetComponent<Entity>(), Damage));
+            return;
         }
 
     }
@@ -59,5 +59,14 @@ public class FireAction : WeaponAction
 
         particle.transform.position = pos;
         Destroy(particle, particle.GetComponent<ParticleSystem>().main.duration);
+    }
+
+    private void SpawnTracer(Vector3 pos)
+    {
+        GameObject tracer = Instantiate(TracerTest);
+
+        tracer.transform.position = Spawn.position;
+        tracer.GetComponent<Tracer>().target = pos;
+        Destroy(tracer, 0.5f);
     }
 }

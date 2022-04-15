@@ -5,12 +5,12 @@ using UnityEngine;
 public class SpawnPoint : MonoBehaviour
 {
     [HideInInspector]
-    public bool FirstSpawn = true;
+    public bool Entry = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (FirstSpawn)
+        if (Entry)
         {
             Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
             if (playerTransform != null)
@@ -24,6 +24,6 @@ public class SpawnPoint : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(transform.position, 0.5f);
-        Gizmos.DrawLine(transform.position, transform.position + transform.up * 2.0f);
+        Gizmos.DrawLine(transform.position, transform.position + transform.up * 3.0f);
     }
 }

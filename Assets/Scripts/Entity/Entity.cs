@@ -9,6 +9,8 @@ public class Entity : MonoBehaviour, IEntityHandler
     public float Health = 10f;
     public string Name;
 
+    public GameObject DestroyablePrefab;
+
     public string ItemId;
 
     private float m_CurrentHealth;
@@ -62,7 +64,14 @@ public class Entity : MonoBehaviour, IEntityHandler
                 //call destroy action
                 EventBus.RaiseEvent<IEntityHandler>(h => h.OnKillEntity(this));
 
-                Destroy(gameObject, 0.17f);
+                if (DestroyablePrefab)
+                {
+                    GameObject desGO = Instantiate(DestroyablePrefab, transform.position, transform.rotation);
+                    Destroy(desGO, desGO.GetComponent<ParticleSystem>().main.duration);
+                }
+
+                transform.position = new Vector3(999999.0f, 999999.0f, 0.0f);
+                Destroy(gameObject, 0.025f);
             }
         }
     }

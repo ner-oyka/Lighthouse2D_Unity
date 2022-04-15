@@ -22,10 +22,28 @@ public class TimeOfDay : MonoBehaviour
 
     private static float currentTime;
 
+    private bool isGlobalLightOff;
+
+    public void OffGlobalLight()
+    {
+        isGlobalLightOff = true;
+    }
+
+    public void OnGlobalLight()
+    {
+        isGlobalLightOff = false;
+    }
+
     public void UpdateTime()
     {
-        Sun.color = RenderSettings.ambientLight = m_SkyColor.Evaluate((TimeDay * 100.0f / 24.0f) * 0.01f);
         currentTime = TimeDay;
+
+        if (isGlobalLightOff)
+        {
+            Sun.color = RenderSettings.ambientLight = Color.Lerp(Sun.color, Color.black, Time.deltaTime * 3.0f);
+            return;
+        }
+        Sun.color = RenderSettings.ambientLight = Color.Lerp(Sun.color, m_SkyColor.Evaluate((TimeDay * 100.0f / 24.0f) * 0.01f), Time.deltaTime * 3.0f);
     }
 
     public static string GetParseTime()
